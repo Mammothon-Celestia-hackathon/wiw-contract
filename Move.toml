@@ -5,10 +5,13 @@ authors = []
 
 [addresses]
 debate_v2 = "0x18693562f4ced0fd77d6b42416003a5945d15358431fbff2b9af0e4b0759d261"
+jeongseup = "0xd7ae4e1e8d4486450936d8fdbb93af0cba8e1ae00c00f82653f76c5d65d76a6f"
 
 [dev-addresses]
 
-[dependencies]
-AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework/", rev = "aptos-cli-v2.5.0" }
+[dependencies.AptosFramework]
+git = "https://github.com/movementlabsxyz/aptos-core.git"
+rev = "movement"
+subdir = "aptos-move/framework/aptos-framework"
 
 [dev-dependencies]
