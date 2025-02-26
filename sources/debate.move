@@ -37,7 +37,6 @@ module debate_v2::ai_debate_v2 {
         total_pool: u64,
         ai_a_pool: u64,
         ai_b_pool: u64,
-        end_time: u64,
         winner: u8,
         is_finished: bool
     }
@@ -85,8 +84,7 @@ module debate_v2::ai_debate_v2 {
         ai_a_address: address,
         ai_b_name: String,
         ai_b_character: String,
-        ai_b_address: address,
-        duration: u64
+        ai_b_address: address
     ) acquires DebateStore {
         let store = borrow_global_mut<DebateStore>(@debate_v2);
         
@@ -108,7 +106,6 @@ module debate_v2::ai_debate_v2 {
             total_pool: 0,
             ai_a_pool: 0,
             ai_b_pool: 0,
-            end_time: timestamp::now_seconds() + duration,
             winner: 0,
             is_finished: false
         };
@@ -165,7 +162,6 @@ module debate_v2::ai_debate_v2 {
         
         assert!(signer::address_of(creator) == debate.creator, ENOT_CREATOR);
         assert!(!debate.is_finished, EDEBATE_ENDED);
-        assert!(timestamp::now_seconds() >= debate.end_time, EDEBATE_NOT_ENDED);
         
         debate.winner = winner;
         debate.is_finished = true;
