@@ -1,10 +1,10 @@
 [package]
-name = "debate_v2"
+name = "debate_v4"
 version = "1.0.0"
 authors = []
 
 [addresses]
-debate_v2 = "0x18693562f4ced0fd77d6b42416003a5945d15358431fbff2b9af0e4b0759d261"
+debate_v4 = "0x18693562f4ced0fd77d6b42416003a5945d15358431fbff2b9af0e4b0759d261"
 jeongseup = "0xd7ae4e1e8d4486450936d8fdbb93af0cba8e1ae00c00f82653f76c5d65d76a6f"
 
 [dev-addresses]

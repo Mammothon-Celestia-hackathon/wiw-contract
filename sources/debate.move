@@ -1,8 +1,7 @@
-module debate_v2::ai_debate_v2 {
+module debate_v4::ai_debate_v4 {
     use std::signer;
     use std::string::String;
     use std::vector;
-    use aptos_framework::timestamp;
     use aptos_framework::account;
     use aptos_framework::event;
 
@@ -15,6 +14,7 @@ module debate_v2::ai_debate_v2 {
     const EALREADY_CLAIMED: u64 = 6;   // Rewards already claimed
     const EDEBATE_HAS_BETS: u64 = 7;  // Debate has active bets
     const EDEBATE_ACTIVE: u64 = 8;    // Debate is still active
+    const ENOT_AI_PARTICIPANT: u64 = 11;  // Caller is not an AI participant
 
     // Constants for AI selection
     const AI_A: u8 = 1;
@@ -49,11 +49,20 @@ module debate_v2::ai_debate_v2 {
         claimed: bool
     }
 
-    // Store for all debates
+    // Event struct for debate finalization
+    struct DebateFinishedEvent has drop, store {
+        debate_id: u64,
+        winner: u8,
+        total_pool: u64,
+        winning_pool: u64
+    }
+
+    // Store for managing debates and events
     struct DebateStore has key {
         debates: vector<Debate>,
         debate_counter: u64,
         bet_events: event::EventHandle<BetEvent>,
+        finish_events: event::EventHandle<DebateFinishedEvent>  // Added for finish events
     }
 
     // Event for betting
@@ -70,6 +79,7 @@ module debate_v2::ai_debate_v2 {
             debates: vector::empty(),
             debate_counter: 0,
             bet_events: account::new_event_handle<BetEvent>(account),
+            finish_events: account::new_event_handle<DebateFinishedEvent>(account),
         };
         move_to(account, store);
     }
@@ -86,7 +96,7 @@ module debate_v2::ai_debate_v2 {
         ai_b_character: String,
         ai_b_address: address
     ) acquires DebateStore {
-        let store = borrow_global_mut<DebateStore>(@debate_v2);
+        let store = borrow_global_mut<DebateStore>(@debate_v4);
         
         let debate = Debate {
             id: store.debate_counter + 1,
@@ -121,20 +131,13 @@ module debate_v2::ai_debate_v2 {
         amount: u64,
         choice: u8
     ) acquires DebateStore {
-        let store = borrow_global_mut<DebateStore>(@debate_v2);
+        let store = borrow_global_mut<DebateStore>(@debate_v4);
         let debate = vector::borrow_mut(&mut store.debates, debate_id - 1);
         
         assert!(!debate.is_finished, EDEBATE_ENDED);
-        assert!(timestamp::now_seconds() < debate.end_time, EDEBATE_ENDED);
         assert!(choice == AI_A || choice == AI_B, EINVALID_AMOUNT);
 
-        if (choice == AI_A) {
-            debate.ai_a_pool = debate.ai_a_pool + amount;
-        } else {
-            debate.ai_b_pool = debate.ai_b_pool + amount;
-        };
-        debate.total_pool = debate.total_pool + amount;
-
+        // Create and store BetInfo for the user
         let bet_info = BetInfo {
             game_id: debate_id,
             amount,
@@ -142,6 +145,13 @@ module debate_v2::ai_debate_v2 {
             claimed: false
         };
         move_to(bettor, bet_info);
+
+        if (choice == AI_A) {
+            debate.ai_a_pool = debate.ai_a_pool + amount;
+        } else {
+            debate.ai_b_pool = debate.ai_b_pool + amount;
+        };
+        debate.total_pool = debate.total_pool + amount;
 
         event::emit_event(&mut store.bet_events, BetEvent {
             debate_id,
@@ -151,20 +161,36 @@ module debate_v2::ai_debate_v2 {
         });
     }
 
-    // Finalize a debate with winner
+    // Finalize the debate with winner and emit event
     public entry fun finalize_debate(
-        creator: &signer,
+        caller: &signer,
         debate_id: u64,
         winner: u8
     ) acquires DebateStore {
-        let store = borrow_global_mut<DebateStore>(@debate_v2);
+        let store = borrow_global_mut<DebateStore>(@debate_v4);
         let debate = vector::borrow_mut(&mut store.debates, debate_id - 1);
         
-        assert!(signer::address_of(creator) == debate.creator, ENOT_CREATOR);
+        // Check if caller is one of the AI participants
+        let caller_addr = signer::address_of(caller);
+        assert!(
+            debate.ai_a.address == caller_addr || 
+            debate.ai_b.address == caller_addr,
+            ENOT_AI_PARTICIPANT
+        );
+        
         assert!(!debate.is_finished, EDEBATE_ENDED);
         
         debate.winner = winner;
         debate.is_finished = true;
+
+        // Emit debate finished event
+        let winning_pool = if (winner == AI_A) { debate.ai_a_pool } else { debate.ai_b_pool };
+        event::emit_event(&mut store.finish_events, DebateFinishedEvent {
+            debate_id,
+            winner,
+            total_pool: debate.total_pool,
+            winning_pool
+        });
     }
 
     // Withdraw winnings
@@ -172,7 +198,7 @@ module debate_v2::ai_debate_v2 {
         user: &signer,
         debate_id: u64
     ) acquires DebateStore, BetInfo {
-        let store = borrow_global<DebateStore>(@debate_v2);
+        let store = borrow_global<DebateStore>(@debate_v4);
         let debate = vector::borrow(&store.debates, debate_id - 1);
         
         assert!(debate.is_finished, EDEBATE_NOT_ENDED);
@@ -199,7 +225,7 @@ module debate_v2::ai_debate_v2 {
         creator: &signer,
         debate_id: u64
     ) acquires DebateStore {
-        let store = borrow_global_mut<DebateStore>(@debate_v2);
+        let store = borrow_global_mut<DebateStore>(@debate_v4);
         
         let debate = vector::borrow(&store.debates, debate_id - 1);
         assert!(signer::address_of(creator) == debate.creator, ENOT_CREATOR);
@@ -210,7 +236,7 @@ module debate_v2::ai_debate_v2 {
     // View function to get debate information
     #[view]
     public fun get_debate(debate_id: u64): Debate acquires DebateStore {
-        let store = borrow_global<DebateStore>(@debate_v2);
+        let store = borrow_global<DebateStore>(@debate_v4);
         *vector::borrow(&store.debates, debate_id - 1)
     }
 
@@ -223,8 +249,37 @@ module debate_v2::ai_debate_v2 {
     // View function to get debate pool information
     #[view]
     public fun get_debate_pool(debate_id: u64): (u64, u64, u64) acquires DebateStore {
-        let store = borrow_global<DebateStore>(@debate_v2);
+        let store = borrow_global<DebateStore>(@debate_v4);
         let debate = vector::borrow(&store.debates, debate_id - 1);
         (debate.total_pool, debate.ai_a_pool, debate.ai_b_pool)
+    }
+
+    // Add view function to check if user has unclaimed rewards
+    #[view]
+    public fun can_claim_rewards(user_addr: address, debate_id: u64): bool acquires DebateStore, BetInfo {
+        // Get debate info
+        let store = borrow_global<DebateStore>(@debate_v4);
+        let debate = vector::borrow(&store.debates, debate_id - 1);
+        
+        // Check if debate is finished
+        if (!debate.is_finished) {
+            return false
+        };
+
+        // Check if user has bet info
+        if (!exists<BetInfo>(user_addr)) {
+            return false
+        };
+
+        // Get user's bet info
+        let bet_info = borrow_global<BetInfo>(user_addr);
+        
+        // Check if bet is for this debate and not claimed yet
+        if (bet_info.game_id != debate_id || bet_info.claimed) {
+            return false
+        };
+
+        // Check if user bet on winning side
+        bet_info.choice == debate.winner
     }
 }
