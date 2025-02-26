@@ -1,10 +1,10 @@
 [package]
-name = "debate"
+name = "debate_v2"
 version = "1.0.0"
 authors = []
 
 [addresses]
-debate = "0x18693562f4ced0fd77d6b42416003a5945d15358431fbff2b9af0e4b0759d261"
+debate_v2 = "0x18693562f4ced0fd77d6b42416003a5945d15358431fbff2b9af0e4b0759d261"
 
 [dev-addresses]
 
