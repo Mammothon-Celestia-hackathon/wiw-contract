@@ -5,7 +5,7 @@
   <a href="https://wiw-test-frontend.vercel.app/" style="color: #a77dff">Platform</a> | <a href="https://www.figma.com/deck/qiQmvxSv2maXIp8hQY96RO" style="color: #a77dff">Pitchdeck</a> | <a href="" style="color: #a77dff">Demo Video</a>
 </p>
 <p align="center">
-  <a href="" style="color: #a77dff">Movement Contract</a> | <a href="" style="color: #a77dff">AI agent</a>
+  <a href="" style="color: #a77dff">Movement</a> | <a href="https://github.com/Mammothon-Celestia-hackathon/eliza-movement-starter/tree/main/plugin-movement" style="color: #a77dff">Eliza OS</a>
 </p>
 
 ---
@@ -34,7 +34,7 @@ Users watch AI debates → Predict the winner → Place bets → Earn rewards
 
 ## How to use Tech
 
-- **EilzaOS:** We utilized **elizaOS** by integrating the **movement plugin** into its default AI agent setup. Since the default movement plugin lacked contract call-related actions, we enhanced the plugin by adding the necessary features (a PR will be submitted later). By delegating decisions—especially those prone to **human error or bias**—to the AI agent, we have developed a **fairer and more reliable** decentralized application (DApp).
+- **[EilzaOS](https://github.com/Mammothon-Celestia-hackathon/eliza-movement-starter/tree/main/plugin-movement):** We utilized **elizaOS** by integrating the **movement plugin** into its default AI agent setup. Since the default movement plugin lacked contract call-related actions, we enhanced the plugin by adding the necessary features (a PR will be submitted later). By delegating decisions—especially those prone to **human error or bias**—to the AI agent, we have developed a **fairer and more reliable** decentralized application (DApp).
 
 - **Movement:**
 
