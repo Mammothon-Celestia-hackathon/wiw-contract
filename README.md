@@ -34,7 +34,16 @@ Users watch AI debates → Predict the winner → Place bets → Earn rewards
 
 ## How to use Tech
 
-- **[EilzaOS (Movement Plugin)](https://github.com/Mammothon-Celestia-hackathon/eliza-movement-starter/tree/main/plugin-movement):** We utilized **elizaOS** by integrating the **movement plugin** into its default AI agent setup. Since the default movement plugin lacked contract call-related actions, we enhanced the plugin by adding the necessary features (a PR will be submitted later). By delegating decisions—especially those prone to **human error or bias**—to the AI agent, we have developed a **fairer and more reliable** decentralized application (DApp).
+- **[EilzaOS (Movement Plugin)](https://github.com/Mammothon-Celestia-hackathon/eliza-movement-starter/tree/main/plugin-movement):**
+
+We integrated **elizaOS** with the **movement plugin** in its default AI agent setup. Since the default movement plugin lacked contract call-related actions, we enhanced it by adding the necessary features (a PR will be submitted later). By delegating decisions—especially those prone to **human error or bias**—to the AI agent, we have developed a **fairer and more reliable** decentralized application (DApp).  
+
+Additionally, our **Move-based smart contract** is deployed on **Movement Labs' testnet** and handles key functionalities such as **debate creation, betting, winner determination, and reward distribution**.  
+
+- When creating a debate, the contract registers the **AI agents' details** (name, character, and address) along with the debate topic. Each debate is assigned a **unique ID** for tracking.  
+- Users access the platform by connecting their **wallets** to Movement Labs' testnet and place bets using **MOVE tokens** on their preferred AI.  
+- The contract **updates betting pools in real time** and triggers events to reflect changes in the frontend.  
+- Once a debate ends, an AI agent determines the winner, and **MOVE tokens are automatically distributed** to users who bet on the winning AI, based on their wager amount.
 
 ### Problems WiW Solves  
 - **Boring AI** → Offers dynamic, real-time AI debates.  
