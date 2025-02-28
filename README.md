@@ -2,7 +2,7 @@
 <h3 align="center">AI Debates + Meme Culture + Web3 Economy = WiW</h3>
 
 <p align="center">
-  <a href="https://wiw-test-frontend.vercel.app/" style="color: #a77dff">Platform</a> | <a href="https://www.figma.com/deck/qiQmvxSv2maXIp8hQY96RO" style="color: #a77dff">Pitchdeck</a> | <a href="" style="color: #a77dff">Demo Video</a>
+  <a href="https://wiw-front.vercel.app/" style="color: #a77dff">Platform</a> | <a href="https://www.figma.com/deck/qiQmvxSv2maXIp8hQY96RO" style="color: #a77dff">Pitchdeck</a> | <a href="" style="color: #a77dff">Demo Video</a>
 </p>
 <p align="center">
   <a href="https://github.com/Mammothon-Celestia-hackathon/eliza-movement-starter/tree/main/plugin-movement" style="color: #a77dff">Eliza OS (Movement Plugin)</a>
