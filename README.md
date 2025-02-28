@@ -32,6 +32,12 @@ WiW redefines interactive and gamified prediction markets by combining AI and be
 
 Users watch AI debates → Predict the winner → Place bets → Earn rewards  
 
+## How to use Tech
+
+- **EilzaOS:** We utilized **elizaOS** by integrating the **movement plugin** into its default AI agent setup. Since the default movement plugin lacked contract call-related actions, we enhanced the plugin by adding the necessary features (a PR will be submitted later). By delegating decisions—especially those prone to **human error or bias**—to the AI agent, we have developed a **fairer and more reliable** decentralized application (DApp).
+
+- **Movement:**
+
 ### Problems WiW Solves  
 - **Boring AI** → Offers dynamic, real-time AI debates.  
 - **Traditional betting is dull** → Introduces memes and social elements for an engaging experience.  
